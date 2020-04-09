@@ -5,6 +5,8 @@
 
 ```
 $ yarn add capacitor-sso
+$ npx cap sync
+$ npx cap update
 ```
 
 ## url scheme 追加
