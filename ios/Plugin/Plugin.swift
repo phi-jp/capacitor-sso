@@ -8,6 +8,7 @@ public class Sso: CAPPlugin {
     var signInCall: CAPPluginCall?
     let googleSignIn: GIDSignIn = GIDSignIn.sharedInstance();
     
+    // initialize 初期化時に呼ばれる
     override public func load() {
         let googleClientId = getConfigValue("googleClientId") as? String ?? "ADD_IN_CAPACITOR_CONFIG_JSON"
         
@@ -15,8 +16,12 @@ public class Sso: CAPPlugin {
         self.googleSignIn.delegate = self as? GIDSignInDelegate
         self.googleSignIn.presentingViewController = bridge.viewController
         
+        // 通知ロジックを利用。
+        // URL によってアプリが開かれた時　AppDelegate から通知される
         NotificationCenter.default.addObserver(self, selector: #selector(notifyFromAppDelegate(notification:)), name: Notification.Name(CAPNotifications.URLOpen.name()), object: nil);
     }
+
+    // echo method
     @objc func echo(_ call: CAPPluginCall) {
         let value = call.getString("value") ?? ""
         call.success([
@@ -24,8 +29,11 @@ public class Sso: CAPPlugin {
         ])
     }
     
+    // グーグルログインメソッドmesoddo
     @objc func signInWithGoogle(_ call: CAPPluginCall) {
-        signInCall = call;
+        signInCall = call; // このメソッドが呼ばれたことを保存する
+
+        // signin処理が非同期処理なので, dispatch queue に投げる
         DispatchQueue.main.async {
             if self.googleSignIn.hasPreviousSignIn() {
                 self.googleSignIn.restorePreviousSignIn();
@@ -35,6 +43,7 @@ public class Sso: CAPPlugin {
         }
     }
     
+    // ログインデータを Dict<string, string> 型 に整理する
     private func googleResponseObject(_ user: GIDGoogleUser ) -> Dictionary<String, String> {
         var data = [:] as! [String : String];
         
@@ -75,6 +84,7 @@ public class Sso: CAPPlugin {
         return data;
     }
     
+    // URLによってアプリが開かれた時の処理
     @objc func notifyFromAppDelegate(notification: Notification) {
         guard  let object = notification.object as? [String:Any],
             let url = object["url"] as? URL else { return }
@@ -127,6 +137,7 @@ public class Sso: CAPPlugin {
     }
 }
 
+// sigin して帰ってくると google の場合これが呼ばれる
 extension Sso: GIDSignInDelegate {
     public func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
         if let error = error {
