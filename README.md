@@ -8,7 +8,7 @@ $ yarn add capacitor-sso
 ```
 
 ## url scheme 追加
-![https://user-images.githubusercontent.com/13277036/78865342-65c07f80-7a78-11ea-88c9-631396e12a03.png]()
+![](https://user-images.githubusercontent.com/13277036/78865342-65c07f80-7a78-11ea-88c9-631396e12a03.png)
 
 
 
