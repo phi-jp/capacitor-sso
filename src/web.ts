@@ -9,9 +9,14 @@ export class SsoWeb extends WebPlugin implements SsoPlugin {
     });
   }
 
-  async echo(options: { value: string }): Promise<{value: string}> {
+  async echo(options: { value: string }): Promise<{ value: string }> {
     console.log('ECHO', options);
     return options;
+  }
+
+  async signInWithGoogle(options: { value: string }): Promise<{ value: string }> {
+    console.log('sign in with google')
+    return options
   }
 }
 

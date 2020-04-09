@@ -4,6 +4,20 @@ declare module "@capacitor/core" {
   }
 }
 
+export interface GoogleSignInData {
+  userId: number
+  accessToken: string
+  idToken: string
+  refreshtoken: string
+  token: string
+  email?: string
+  name?: string
+  familyName?: string
+  givenName?: string
+  image?: string
+}
+
 export interface SsoPlugin {
-  echo(options: { value: string }): Promise<{value: string}>;
+  echo(options: { value: string }): Promise<{ value: string }>;
+  signInWithGoogle(options: { value: string }): Promise<{ data: GoogleSignInData }>;
 }
