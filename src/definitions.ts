@@ -19,5 +19,5 @@ export interface GoogleSignInData {
 
 export interface SsoPlugin {
   echo(options: { value: string }): Promise<{ value: string }>;
-  signInWithGoogle(options: { value: string }): Promise<{ data: GoogleSignInData }>;
+  signInWithGoogle(): Promise<{ data: GoogleSignInData }>;
 }

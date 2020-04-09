@@ -1,5 +1,5 @@
 import { WebPlugin } from '@capacitor/core';
-import { SsoPlugin } from './definitions';
+import { SsoPlugin, GoogleSignInData } from './definitions';
 
 export class SsoWeb extends WebPlugin implements SsoPlugin {
   constructor() {
@@ -13,10 +13,8 @@ export class SsoWeb extends WebPlugin implements SsoPlugin {
     console.log('ECHO', options);
     return options;
   }
-
-  async signInWithGoogle(options: { value: string }): Promise<{ value: string }> {
-    console.log('sign in with google')
-    return options
+  async signInWithGoogle(): Promise<{ data: GoogleSignInData }> {
+    return
   }
 }
 
