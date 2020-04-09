@@ -22,4 +22,54 @@ public class Sso: CAPPlugin {
             "value": value
         ])
     }
+    @objc func notifyFromAppDelegate(notification: Notification) {
+        guard  let object = notification.object as? [String:Any],
+            let url = object["url"] as? URL else { return }
+    
+        let isFromTwitter = url.absoluteString.contains("twitterkit")
+        let isFromLine = url.absoluteString.contains("line3rdp")
+        let isFromGoogle = url.absoluteString.contains("com.googleusercontent")
+        let isFromFacebook = url.absoluteString.prefix(2) == "fb"
+        
+        var options:[UIApplication.OpenURLOptionsKey:Any] = [:]
+        
+        var sourceApplication: String
+        if let sa = object["sourceApplication"] as? String {
+            sourceApplication = sa
+        } else {
+            sourceApplication = ""
+        }
+        options[UIApplication.OpenURLOptionsKey.sourceApplication] = sourceApplication
+        
+        let an = object["annotation"]
+        if an != nil {
+            options[UIApplication.OpenURLOptionsKey.openInPlace] = an
+        } else {
+            options[UIApplication.OpenURLOptionsKey.openInPlace] = 0
+        }
+        
+        // twitter 用
+//        if isFromTwitter {
+//            if (sourceApplication == "") {
+//                options[UIApplication.OpenURLOptionsKey.sourceApplication] = "com.twitter"
+//            }
+//            TWTRTwitter().application(UIApplication.shared,
+//                                      open: url,
+//                                      options: options)
+//        }
+//
+//        // line 用
+//        if isFromLine {
+//            _ = LoginManager.shared.application(UIApplication.shared, open: url, options: options)
+//        }
+//
+//        // facebook 用
+//        if isFromFacebook {
+//            ApplicationDelegate.shared.application(UIApplication.shared,
+//                                                   open: url,
+//                                                   sourceApplication: sourceApplication,
+//                                                   annotation: options[UIApplication.OpenURLOptionsKey.openInPlace])
+//        }
+        
+    }
 }
