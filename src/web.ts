@@ -14,7 +14,7 @@ export class SsoWeb extends WebPlugin implements SsoPlugin {
     return options;
   }
   async signInWithGoogle(): Promise<{ data: GoogleSignInData }> {
-    return
+    return null;
   }
 }
 
