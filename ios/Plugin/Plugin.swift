@@ -5,6 +5,7 @@ import GoogleSignIn
 
 @objc(Sso)
 public class Sso: CAPPlugin {
+    var signInCall: CAPPluginCall?
     let googleSignIn: GIDSignIn = GIDSignIn.sharedInstance();
     
     override public func load() {
@@ -22,6 +23,58 @@ public class Sso: CAPPlugin {
             "value": value
         ])
     }
+    
+    @objc func signInWithGoogle(_ call: CAPPluginCall) {
+        signInCall = call;
+        DispatchQueue.main.async {
+            if self.googleSignIn.hasPreviousSignIn() {
+                self.googleSignIn.restorePreviousSignIn();
+            } else {
+                self.googleSignIn.signIn();
+            }
+        }
+    }
+    
+    private func googleResponseObject(_ user: GIDGoogleUser ) -> Dictionary<String, String> {
+        var data = [:] as! [String : String];
+        
+        // user Profile
+        if let userId = user.userID {
+            data.updateValue(userId, forKey: "userId")
+        }
+        if let name = user.profile.name {
+            data.updateValue(name, forKey: "name")
+        }
+        if let givenName = user.profile.givenName {
+            data.updateValue(givenName, forKey: "givenName")
+        }
+        if let familyName = user.profile.familyName {
+            data.updateValue(familyName, forKey: "familyName")
+        }
+        if let email = user.profile.email {
+            data.updateValue(email, forKey: "email")
+        }
+        if let image = user.profile.imageURL(withDimension: 320) {
+            data.updateValue(image.absoluteString, forKey: "image")
+        }
+        
+        // Token
+        if let token = user.authentication.idToken {
+            data.updateValue(token, forKey: "token")
+        }
+        if let idToken = user.authentication.idToken {
+            data.updateValue(idToken, forKey: "idToken")
+        }
+        if let refreshToken = user.authentication.refreshToken {
+            data.updateValue(refreshToken, forKey: "refreshtoken")
+        }
+        if let accessToken = user.authentication.accessToken {
+            data.updateValue(accessToken, forKey: "accessToken")
+        }
+        
+        return data;
+    }
+    
     @objc func notifyFromAppDelegate(notification: Notification) {
         guard  let object = notification.object as? [String:Any],
             let url = object["url"] as? URL else { return }
@@ -71,5 +124,16 @@ public class Sso: CAPPlugin {
 //                                                   annotation: options[UIApplication.OpenURLOptionsKey.openInPlace])
 //        }
         
+    }
+}
+
+extension Sso: GIDSignInDelegate {
+    public func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        if let error = error {
+            signInCall?.error(error.localizedDescription);
+            return;
+        }
+        let user = googleResponseObject(user);
+        signInCall?.success(user)
     }
 }
